@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Weather Intelligence — Real-time weather data with AI-powered predictions and outfit recommendations." />
+  <title>Weather Intelligence</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="/static/css/animations.css" />
+  <link rel="stylesheet" href="/static/css/responsive.css" />
+</head>
+<body data-theme="default">
+
+  <!-- Particle Canvas Layer -->
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="/">
+        <i class="fa-solid fa-wind nav__logo-icon"></i>
+        <span class="nav__brand-text">Weather<span class="accent">Intelligence</span></span>
+      </a>
+      <div class="nav__right">
+        <span class="nav__update-badge" id="update-badge" style="display:none;">
+          <i class="fa-regular fa-clock"></i>
+          <span id="update-time">Just updated</span>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Hero Search Section -->
+    <section class="hero" id="hero">
+      <div class="hero__backdrop"></div>
+      <div class="hero__content">
+        <h1 class="hero__title">
+          <span class="hero__title-line">Real-Time</span>
+          <span class="hero__title-line italic">Weather Intelligence</span>
+        </h1>
+        <p class="hero__subtitle">AI-powered forecasts, risk analysis & outfit guidance for any city on Earth.</p>
+
+        <form class="search-form" id="search-form" autocomplete="off" onsubmit="return false;">
+          <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass search-bar__icon"></i>
+            <input
+              type="text"
+              id="city-input"
+              class="search-bar__input"
+              placeholder="Search any city — London, Tokyo, Dubai..."
+              maxlength="80"
+              spellcheck="false"
+              aria-label="Enter city name"
+            />
+            <button class="search-bar__btn" id="search-btn" aria-label="Get weather">
+              <span class="btn-text">Analyse</span>
+              <i class="fa-solid fa-arrow-right btn-icon"></i>
+            </button>
+          </div>
+          <p class="search-error" id="search-error" role="alert" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- Results Container -->
+    <div class="results-container" id="results-container" style="display:none;">
+
+      <!-- ── SKELETON LOADER ── -->
+      <div class="skeleton-loader" id="skeleton-loader">
+        <div class="skeleton-grid">
+          <div class="skeleton-card tall"><div class="shimmer"></div></div>
+          <div class="skeleton-card"><div class="shimmer"></div></div>
+          <div class="skeleton-card"><div class="shimmer"></div></div>
+        </div>
+        <div class="skeleton-grid skeleton-grid--wide">
+          <div class="skeleton-card"><div class="shimmer"></div></div>
+          <div class="skeleton-card"><div class="shimmer"></div></div>
+        </div>
+      </div>
+
+      <!-- ── MAIN RESULTS ── -->
+      <div class="results-content" id="results-content" style="display:none;">
+
+        <!-- Row 1: Current Weather + ML Summary -->
+        <div class="dashboard-grid dashboard-grid--hero">
+
+          <!-- Current Weather Card -->
+          <div class="glass-card weather-hero-card" id="weather-hero-card">
+            <div class="weather-hero-card__location">
+              <i class="fa-solid fa-location-dot"></i>
+              <span id="city-display">—</span>
+              <span class="weather-hero-card__country" id="country-display"></span>
+            </div>
+            <div class="weather-hero-card__main">
+              <div class="weather-hero-card__icon-wrap" id="weather-icon-wrap">
+                <!-- Dynamic SVG icon injected here -->
+              </div>
+              <div class="weather-hero-card__temp-block">
+                <span class="weather-hero-card__temp" id="temp-display">—</span>
+                <span class="weather-hero-card__unit">°C</span>
+              </div>
+            </div>
+            <p class="weather-hero-card__desc" id="weather-desc">—</p>
+            <div class="weather-hero-card__meta-row">
+              <div class="meta-chip">
+                <i class="fa-solid fa-temperature-half"></i>
+                Feels <span id="feels-like">—</span>°C
+              </div>
+              <div class="meta-chip">
+                <i class="fa-solid fa-droplet"></i>
+                <span id="humidity">—</span>% Humidity
+              </div>
+              <div class="meta-chip">
+                <i class="fa-solid fa-wind"></i>
+                <span id="wind-speed">—</span> km/h
+              </div>
+              <div class="meta-chip">
+                <i class="fa-solid fa-eye"></i>
+                <span id="visibility">—</span> km
+              </div>
+            </div>
+            <div class="weather-hero-card__extra-row">
+              <div class="extra-stat">
+                <span class="extra-stat__label">Pressure</span>
+                <span class="extra-stat__val" id="pressure">—</span>
+                <span class="extra-stat__unit">hPa</span>
+              </div>
+              <div class="extra-stat">
+                <span class="extra-stat__label">UV Index</span>
+                <span class="extra-stat__val" id="uv-index">—</span>
+              </div>
+              <div class="extra-stat">
+                <span class="extra-stat__label">Cloud Cover</span>
+                <span class="extra-stat__val" id="cloud-cover">—</span>
+                <span class="extra-stat__unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Analysis Card -->
+          <div class="glass-card ai-card" id="ai-card">
+            <div class="ai-card__header">
+              <i class="fa-solid fa-microchip"></i>
+              <span>AI Analysis</span>
+              <div class="confidence-badge" id="ai-confidence-badge">
+                <span id="ai-confidence">—</span>% confidence
+              </div>
+            </div>
+
+            <div class="ai-category-block" id="ai-category-block">
+              <div class="category-pill" id="category-pill">—</div>
+            </div>
+
+            <div class="ai-stats-grid">
+              <div class="ai-stat">
+                <span class="ai-stat__label">Next 6h Temp</span>
+                <span class="ai-stat__val" id="pred-temp">—°C</span>
+              </div>
+              <div class="ai-stat">
+                <span class="ai-stat__label">Trend</span>
+                <span class="ai-stat__val" id="trend-dir">—</span>
+              </div>
+              <div class="ai-stat">
+                <span class="ai-stat__label">Cluster Type</span>
+                <span class="ai-stat__val" id="cluster-type">—</span>
+              </div>
+              <div class="ai-stat">
+                <span class="ai-stat__label">Conditions</span>
+                <span class="ai-stat__val" id="conditions-summary">—</span>
+              </div>
+            </div>
+
+            <div class="clothing-rec" id="clothing-rec">
+              <div class="clothing-rec__label">
+                <i class="fa-solid fa-shirt"></i> Recommended Outfit
+              </div>
+              <div class="clothing-rec__primary" id="clothing-primary">—</div>
+              <ul class="clothing-rec__items" id="clothing-items"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Risk Meters -->
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Weather Risk Index
+          </h2>
+        </div>
+        <div class="dashboard-grid dashboard-grid--thirds">
+          <div class="glass-card risk-card" id="risk-heat">
+            <div class="risk-card__icon" style="color: var(--risk-heat-color, #f97316)">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+            <h3 class="risk-card__title">Heatstroke Risk</h3>
+            <div class="risk-meter">
+              <div class="risk-meter__track">
+                <div class="risk-meter__fill" id="heat-meter-fill"></div>
+              </div>
+              <div class="risk-meter__labels">
+                <span>Low</span><span>High</span>
+              </div>
+            </div>
+            <div class="risk-badge" id="heat-badge">—</div>
+            <p class="risk-tip" id="heat-tip">—</p>
+          </div>
+
+          <div class="glass-card risk-card" id="risk-cold">
+            <div class="risk-card__icon" style="color: var(--risk-cold-color, #60a5fa)">
+              <i class="fa-solid fa-snowflake"></i>
+            </div>
+            <h3 class="risk-card__title">Cold Exposure Risk</h3>
+            <div class="risk-meter">
+              <div class="risk-meter__track">
+                <div class="risk-meter__fill" id="cold-meter-fill"></div>
+              </div>
+              <div class="risk-meter__labels">
+                <span>Low</span><span>High</span>
+              </div>
+            </div>
+            <div class="risk-badge" id="cold-badge">—</div>
+            <p class="risk-tip" id="cold-tip">—</p>
+          </div>
+
+          <div class="glass-card risk-card" id="risk-humidity">
+            <div class="risk-card__icon" style="color: var(--risk-humidity-color, #818cf8)">
+              <i class="fa-solid fa-cloud-rain"></i>
+            </div>
+            <h3 class="risk-card__title">Humidity Discomfort</h3>
+            <div class="risk-meter">
+              <div class="risk-meter__track">
+                <div class="risk-meter__fill" id="humidity-meter-fill"></div>
+              </div>
+              <div class="risk-meter__labels">
+                <span>Low</span><span>High</span>
+              </div>
+            </div>
+            <div class="risk-badge" id="humidity-badge">—</div>
+            <p class="risk-tip" id="humidity-tip">—</p>
+          </div>
+        </div>
+
+        <!-- Row 3: Temperature Trend Chart -->
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fa-solid fa-chart-line"></i>
+            24-Hour Temperature Trend
+          </h2>
+          <div class="section-meta" id="trend-meta">Linear Regression Model</div>
+        </div>
+        <div class="glass-card chart-card">
+          <canvas id="temp-chart" height="120"></canvas>
+        </div>
+
+        <!-- Row 4: 7-Day Forecast -->
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fa-solid fa-calendar-days"></i>
+            7-Day Forecast
+          </h2>
+        </div>
+        <div class="forecast-strip" id="forecast-strip">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- Row 5: Outfit Products -->
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fa-solid fa-bag-shopping"></i>
+            Outfit Recommendations
+          </h2>
+          <div class="section-meta" id="outfit-meta">Based on current conditions</div>
+        </div>
+        <div class="products-grid" id="products-grid">
+          <!-- Injected by JS -->
+        </div>
+
+        <!-- Row 6: City Content -->
+        <div class="section-header">
+          <h2 class="section-title">
+            <i class="fa-solid fa-city"></i>
+            About the City
+          </h2>
+        </div>
+        <div class="city-section">
+          <div class="glass-card city-desc-card">
+            <p class="city-description" id="city-description">—</p>
+            <div class="tourist-spots" id="tourist-spots">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+          <div class="city-gallery" id="city-gallery">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+      </div><!-- /results-content -->
+    </div><!-- /results-container -->
+
+    <!-- Empty / Not Found State -->
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <i class="fa-solid fa-location-question empty-state__icon"></i>
+      <h2 class="empty-state__title" id="empty-state-title">City Not Found</h2>
+      <p class="empty-state__body" id="empty-state-body">We couldn't locate weather data for that location. Please check the spelling and try again.</p>
+      <button class="btn-retry" onclick="document.getElementById('city-input').focus()">
+        <i class="fa-solid fa-rotate-right"></i> Try Another City
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <span>Weather Intelligence &copy; 2024</span>
+      <span class="footer__sep">·</span>
+      <span>Powered by Open-Meteo &amp; scikit-learn</span>
+      <span class="footer__sep">·</span>
+      <span>Data refreshes every 10 minutes</span>
+    </div>
+  </footer>
+
+  <!-- JS Modules -->
+  <script src="/static/js/animations.js"></script>
+  <script src="/static/js/theme.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
