@@ -1,0 +1,122 @@
+"""
+theme_service.py
+Determines the visual theme based on weather conditions.
+"""
+
+
+THEME_MAP = {
+    'extreme_cold': {
+        'key': 'extreme-cold',
+        'name': 'Extreme Cold',
+        'bg_start': '#0a0f2e',
+        'bg_end': '#1a2a5e',
+        'accent': '#60a5fa',
+        'particle': 'snow',
+        'description': 'Deep blue gradient with snowfall particles',
+    },
+    'cold': {
+        'key': 'cold',
+        'name': 'Cold',
+        'bg_start': '#0f1f3d',
+        'bg_end': '#1e3a5f',
+        'accent': '#93c5fd',
+        'particle': 'wind',
+        'description': 'Soft blue tone with wind particles',
+    },
+    'normal': {
+        'key': 'normal',
+        'name': 'Normal',
+        'bg_start': '#0d1f12',
+        'bg_end': '#1a3825',
+        'accent': '#4ade80',
+        'particle': 'float',
+        'description': 'Neutral green with floating light particles',
+    },
+    'warm': {
+        'key': 'warm',
+        'name': 'Warm',
+        'bg_start': '#1f1006',
+        'bg_end': '#3d2010',
+        'accent': '#fb923c',
+        'particle': 'glow',
+        'description': 'Soft orange glow with ambient gradient',
+    },
+    'hot': {
+        'key': 'hot',
+        'name': 'Hot',
+        'bg_start': '#2d0f00',
+        'bg_end': '#5c1a00',
+        'accent': '#f97316',
+        'particle': 'shimmer',
+        'description': 'Orange-red gradient with heat shimmer',
+    },
+    'extreme_hot': {
+        'key': 'extreme-hot',
+        'name': 'Extreme Hot',
+        'bg_start': '#200000',
+        'bg_end': '#4a0000',
+        'accent': '#ef4444',
+        'particle': 'heatwave',
+        'description': 'Dark red gradient with pulsing heat wave',
+    },
+}
+
+# Rain / Snow / Thunderstorm overrides
+CODE_OVERRIDES = {
+    'rain': {
+        'key': 'rain',
+        'name': 'Rainy',
+        'bg_start': '#0c1520',
+        'bg_end': '#1a2c3d',
+        'accent': '#7dd3fc',
+        'particle': 'rain',
+    },
+    'snow': {
+        'key': 'snow',
+        'name': 'Snowy',
+        'bg_start': '#0a0f2e',
+        'bg_end': '#1e2f50',
+        'accent': '#e0f2fe',
+        'particle': 'snow',
+    },
+    'thunderstorm': {
+        'key': 'storm',
+        'name': 'Thunderstorm',
+        'bg_start': '#0a0a1a',
+        'bg_end': '#1a1a3a',
+        'accent': '#a78bfa',
+        'particle': 'lightning',
+    },
+    'fog': {
+        'key': 'fog',
+        'name': 'Foggy',
+        'bg_start': '#111827',
+        'bg_end': '#1f2937',
+        'accent': '#9ca3af',
+        'particle': 'float',
+    },
+}
+
+DEFAULT_THEME = {
+    'key': 'default',
+    'name': 'Clear',
+    'bg_start': '#0d0d0d',
+    'bg_end': '#1a1a2e',
+    'accent': '#60a5fa',
+    'particle': 'float',
+}
+
+
+def get_theme(category_key: str, icon_key: str = '') -> dict:
+    """
+    Return theme dict for given temperature category and weather icon.
+    Icon key overrides take priority for precipitation/fog conditions.
+    """
+    icon_key = icon_key or ''
+
+    # Check precipitation overrides first
+    for override_key in ('thunderstorm', 'rain', 'snow', 'fog'):
+        if override_key in icon_key:
+            return CODE_OVERRIDES[override_key]
+
+    return THEME_MAP.get(category_key, DEFAULT_THEME)
