@@ -1,0 +1,238 @@
+/* ─────────────────────────────────────────────────────
+   animations.css — Weather Intelligence Platform
+   All keyframe animations, transitions, and effects
+───────────────────────────────────────────────────── */
+
+/* ── Fade & Slide ─────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Shimmer ──────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ── Icon bob ─────────────────────────────────────── */
+@keyframes icon-bob {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+/* ── Pulse glow ───────────────────────────────────── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.3); }
+}
+
+/* ── Heat shimmer ─────────────────────────────────── */
+@keyframes heat-shimmer {
+  0% { transform: scaleX(1) translateY(0); opacity: 0.3; }
+  25% { transform: scaleX(1.02) translateY(-2px); opacity: 0.5; }
+  75% { transform: scaleX(0.98) translateY(2px); opacity: 0.3; }
+  100% { transform: scaleX(1) translateY(0); opacity: 0.3; }
+}
+
+/* ── Wind sweep ───────────────────────────────────── */
+@keyframes wind-sweep {
+  0% { transform: translateX(-120%) rotate(-5deg); opacity: 0; }
+  30% { opacity: 0.7; }
+  100% { transform: translateX(120vw) rotate(-5deg); opacity: 0; }
+}
+
+/* ── Float particle ───────────────────────────────── */
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0.8);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 0.8; }
+  100% {
+    transform: translateY(-50px) translateX(var(--drift, 30px)) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ── Snowfall ─────────────────────────────────────── */
+@keyframes snow-fall {
+  0% {
+    transform: translateY(-20px) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(var(--drift, 40px)) rotate(720deg);
+    opacity: 0.6;
+  }
+}
+
+/* ── Rain ─────────────────────────────────────────── */
+@keyframes rain-fall {
+  0% {
+    transform: translateY(-20px) translateX(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) translateX(var(--rain-drift, 20px));
+    opacity: 0.1;
+  }
+}
+
+/* ── Lightning flash ──────────────────────────────── */
+@keyframes lightning-flash {
+  0%, 90%, 100% { opacity: 0; }
+  91% { opacity: 0.9; }
+  93% { opacity: 0.2; }
+  95% { opacity: 0.8; }
+}
+
+/* ── Heat wave pulse ──────────────────────────────── */
+@keyframes heat-wave-pulse {
+  0%, 100% {
+    transform: scaleY(1);
+    filter: blur(0px);
+  }
+  50% {
+    transform: scaleY(1.005);
+    filter: blur(1px);
+  }
+}
+
+/* ── Risk meter fill ──────────────────────────────── */
+@keyframes meter-fill {
+  from { width: 0%; }
+}
+
+/* ── Card stagger reveal ──────────────────────────── */
+.glass-card {
+  animation: fadeInUp 0.5s ease both;
+}
+
+.dashboard-grid .glass-card:nth-child(1) { animation-delay: 0.05s; }
+.dashboard-grid .glass-card:nth-child(2) { animation-delay: 0.12s; }
+.dashboard-grid .glass-card:nth-child(3) { animation-delay: 0.18s; }
+
+.forecast-day { animation: fadeInUp 0.4s ease both; }
+.forecast-day:nth-child(1) { animation-delay: 0.05s; }
+.forecast-day:nth-child(2) { animation-delay: 0.1s; }
+.forecast-day:nth-child(3) { animation-delay: 0.15s; }
+.forecast-day:nth-child(4) { animation-delay: 0.2s; }
+.forecast-day:nth-child(5) { animation-delay: 0.25s; }
+.forecast-day:nth-child(6) { animation-delay: 0.3s; }
+.forecast-day:nth-child(7) { animation-delay: 0.35s; }
+
+.product-card { animation: fadeInUp 0.5s ease both; }
+.product-card:nth-child(1) { animation-delay: 0.05s; }
+.product-card:nth-child(2) { animation-delay: 0.12s; }
+.product-card:nth-child(3) { animation-delay: 0.18s; }
+
+/* ── Theme transitions ────────────────────────────── */
+body {
+  transition:
+    background-color 0.8s ease,
+    background-image 0.8s ease;
+}
+
+.nav {
+  transition: background 0.6s ease, border-color 0.6s ease;
+}
+
+/* ── Temperature display counter ─────────────────── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.weather-hero-card__temp {
+  animation: count-up 0.5s ease forwards;
+}
+
+/* ── Pulsing accent dot ───────────────────────────── */
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+
+/* ── City gallery fade in ─────────────────────────── */
+.city-gallery__img {
+  transition: opacity 0.5s ease, transform 0.6s ease;
+}
+
+/* ── Section headers ──────────────────────────────── */
+.section-header {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* ── Hero text entrance ───────────────────────────── */
+.hero__title-line {
+  display: block;
+  animation: slideDown 0.6s ease both;
+}
+
+.hero__title-line:nth-child(1) { animation-delay: 0.1s; }
+.hero__title-line:nth-child(2) { animation-delay: 0.2s; }
+
+.hero__subtitle {
+  animation: fadeIn 0.6s ease 0.3s both;
+}
+
+.search-form {
+  animation: fadeInUp 0.6s ease 0.35s both;
+}
+
+/* ── Loading spinner for search button ───────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── Risk card entrance ───────────────────────────── */
+.risk-card { animation: fadeInUp 0.5s ease both; }
+.risk-card:nth-child(1) { animation-delay: 0.05s; }
+.risk-card:nth-child(2) { animation-delay: 0.12s; }
+.risk-card:nth-child(3) { animation-delay: 0.18s; }
+
+/* ── Scroll-triggered reveal ──────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+}
